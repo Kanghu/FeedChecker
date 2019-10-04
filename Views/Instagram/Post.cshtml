@@ -1,0 +1,19 @@
+﻿@model FeedChecker.Library.PostViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/styles.css" rel="stylesheet" />
+
+<div class="post-img">
+    <img src="@Model.Post.Images.StandardResolution.Url" width="400"/>
+    <div class="comments" style="padding: 3px; border: 1px solid rgba(169, 169, 169, 0.5);">
+        Liked by <b>@Model.Post.Likes.Count</b> people <br />
+        <b>@Model.Post.User.Username</b> @Model.Post.Caption.Text <br />
+        @foreach (var comment in Model.Comments)
+        {
+            <b>@comment.From.Username:</b> @comment.Text <br />
+        }
+    </div>
+</div>

@@ -1,0 +1,12 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="jumbotron">
+    <h2>Feed Checker</h2>
+    <p class="lead">Feed Checker is a web application that allows you to retrieve your account's feed (latest media) from Instagram.</p>
+    @using (Html.BeginForm())
+    {
+        <p><input type="submit" value="Login" class="btn btn-primary btn-lg" /></p>
+    }
+</div>

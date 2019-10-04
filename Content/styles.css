@@ -1,0 +1,70 @@
+﻿.insta-img-box {
+    display: inline-block;
+    margin: 10px;
+}
+
+img.insta {
+    object-fit: cover;
+    width: 300px;
+    height: 300px;
+}
+
+video.insta {
+    object-fit: cover;
+    width: 300px;
+    height: 300px;
+}
+
+div.caption-text {
+    border: 1px solid rgba(169, 169, 169, 0.3);
+    background-color: rgba(169, 169, 169, 0.2);
+    width: 300px;
+    font-family: "Calibri";
+    padding-left: 5px;
+    padding-top: 2px;
+}
+
+div.location-text {
+    border: 1px solid rgba(169, 169, 169, 0.5);
+    background-color: rgba(169, 169, 169, 0.2);
+    width: 300px;
+    height: 20px;
+    padding: 3px;
+    font-size: 10px;
+    font-family: "Calibri";
+}
+
+.user-header {
+    background-color: rgba(128, 128, 128, 0.2);
+    margin: 10px;
+}
+
+.user-img {
+    display: inline-block;
+    margin: 15px;
+}
+
+.user-info {
+    display: inline-block;
+    margin: 15px;
+}
+
+.post-img {
+    display: inline-block;
+    margin: 15px;
+    margin-top: 15px;
+}
+
+.comments {
+    width: 400px;
+    background-color: rgba(169, 169, 169, 0.3);
+    font-family: Calibri;
+}
+
+h3 {
+    font-family: "Calibri Light";
+    font-size: 2em;
+}
+
+body {
+}

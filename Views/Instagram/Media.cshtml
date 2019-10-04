@@ -1,0 +1,53 @@
+﻿@model FeedChecker.Library.MediaViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/styles.css" rel="stylesheet" />
+
+<div class="user-header container img-rounded">
+    <img src="@Model.User.ProfilePicture" class="user-img img-circle" align="left"/>
+    <div class="user-info">
+        <h3>@Model.User.Username</h3>
+        <p>
+            <b>@Model.User.Counts.Media</b> posts &nbsp;
+            <b>@Model.User.Counts.FollowedBy</b> followers &nbsp;
+            <b>@Model.User.Counts.Follows</b> follows &nbsp;
+        </p>
+        <br />
+        <b>@Model.User.FullName</b> <br />
+        <p>@Model.User.Bio</p>
+    </div>
+</div>
+<div class="container">
+    @foreach(var post in Model.Media)
+    {
+    <div class="insta-img-box">
+        <div class="location-text">
+            @if (post.Location != null)
+            {
+                @post.Location.Name
+            }
+        </div>
+
+        @if (post.Type == "image")
+        {
+            <a href="@Url.Action("Post", "Instagram", new { mediaID = post.ID})" >
+                <img src="@post.Images.StandardResolution.Url" class="insta" />
+            </a>
+        }
+        else
+        {
+            <video width="300" height="300" controls>
+                <source src="@post.Videos.StandardResolution.Url" type="video/mp4">
+            </video>
+        }
+        
+        <div class="caption-text">
+            Liked by <b>@post.Likes.Count</b> people <br />
+            <b>@post.Caption.From.Username</b> @post.Caption.Text
+        </div>
+    </div>
+    }
+</div>
