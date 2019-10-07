@@ -5,8 +5,8 @@ The following account is a sandbox user for the application:
 Username: artstudio_test  
 Password: arstudio100  
 
-The redirect from the authentication page back to our application is  
+The redirect after authenticating leads to:
 https://localhost:44375/Instagram/Access
-
-Thus the server should be hosted on localhost:44375 in order to correctly
-redirect back.
+In order to correctly redirect back to the 
+application with a valid authentication code,
+app must be hosted on port 44375.
