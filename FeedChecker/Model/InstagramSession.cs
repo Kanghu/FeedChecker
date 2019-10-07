@@ -4,9 +4,11 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using System.Net;
+using System.Net.Http;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 /**
  * InstagramSession is the class that handles interaction with Instagram's API,
@@ -58,7 +60,6 @@ namespace FeedChecker.Library
             using (WebClient exchangeClient = new WebClient())
             {
                 var response = exchangeClient.UploadValues("https://api.instagram.com/oauth/access_token", "POST", parameters);
-
                 /* Get response consisting of an array of 
                 * bytes and convert it into string (JSON format) */
                 var result = System.Text.Encoding.Default.GetString(response);
@@ -81,36 +82,23 @@ namespace FeedChecker.Library
          * is returned. */
         public IList<InstagramPost> GetMedia()
         {
-            /* Prepare a GET request to the media endpoint */
+            /* Perform a GET request to the 'media' endpoint */
             string mediaEndpoint = "https://api.instagram.com/v1/users/self/media/recent/?access_token=" + this.AccessToken;
-            HttpWebRequest mediaRequest = (HttpWebRequest)HttpWebRequest.Create(mediaEndpoint);
-            mediaRequest.Method = "GET";
-            string mediaJson;
-
-            /* Read the response into a string. 'using' is utilized
-            *  to properly dispose of 'response' after reading is finished. */
-            using (HttpWebResponse response = (HttpWebResponse)mediaRequest.GetResponse())
-            {
-                Stream responseStream = response.GetResponseStream();
-                StreamReader responseReader = new StreamReader(responseStream);
-                mediaJson = responseReader.ReadToEnd();
-                responseStream.Close();
-                responseReader.Close();
-            }
+            string mediaJson = GetData(mediaEndpoint);
             
-            /* Parse the children tokens of 'mediaToken[data]', consisting
-             * of JSON objects representing posts. Deserialize each
-             * object and add it into a IList<InstagramPostModel> */
+            /* Parse the children tokens of 'mediaToken[data]', comprised
+             * of JSON objects representing posts. */
             JObject mediaToken = JObject.Parse(mediaJson);
             IList <JToken> mediaList = mediaToken["data"].Children().ToList();
             IList <InstagramPost> posts = new List<InstagramPost>();
 
+            /* Deserialize each token into a InstagramPost */
             foreach(JToken postToken in mediaList)
             {
                 posts.Add(postToken.ToObject<InstagramPost>());
             }
 
-            /* Returns a list of recent media */
+            /* Returns the list of recent media */
             return posts;
         }
 
@@ -119,22 +107,9 @@ namespace FeedChecker.Library
          * accessible by key 'data'. */
         public InstagramUser GetUser()
         {
-            /* Prepare a GET request to the media endpoint */
+            /* Perform a GET request to the 'user' endpoint */
             string userEndpoint = "https://api.instagram.com/v1/users/self/?access_token=" + this.AccessToken;
-            HttpWebRequest userRequest = (HttpWebRequest)HttpWebRequest.Create(userEndpoint);
-            userRequest.Method = "GET";
-            string userJson;
-
-            /* Read the response into a string. 'using' is utilized
-             * to properly dispose of 'response' after reading is finished */
-            using (HttpWebResponse response = (HttpWebResponse)userRequest.GetResponse())
-            {
-                Stream responseStream = response.GetResponseStream();
-                StreamReader responseReader = new StreamReader(responseStream);
-                userJson = responseReader.ReadToEnd();
-                responseStream.Close();
-                responseReader.Close();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
-            }
+            string userJson = GetData(userEndpoint);
 
             /* Parse the JSON 'data' field to access data about the user */
             JObject responseToken = JObject.Parse(userJson);
@@ -146,43 +121,55 @@ namespace FeedChecker.Library
         }
 
         /* Get a list of recent comments on media object identified by
-         * 'mediaID'. After establishing communication with 'comments' 
+         * 'mediaID'. After performing a GET request to  'comments' 
          * endpoint, the JSON list of comments is parsed and deserialized
-         * into a list of type <InstagramComment> that is returned back */
+         * into a list of type <InstagramComment> that is returned. */
         public IList<InstagramComment> GetComments(string mediaID)
         {
-            /* Prepare a GET request to the comments endpoint */
+            /* Perform a GET request to the 'comments' endpoint */
             string commentsEndpoint = "https://api.instagram.com/v1/media/" + mediaID
                 + "/comments?access_token=" + this.AccessToken;
-            HttpWebRequest commentRequest = (HttpWebRequest)HttpWebRequest.Create(commentsEndpoint);
-            commentRequest.Method = "GET";
-            string commentsJson;
+            string commentsJson = GetData(commentsEndpoint);
 
-            /* Read the response into a string. 'using' is utilized
-             * to properly dispose of 'response' after reading is finished */
-            using (HttpWebResponse response = (HttpWebResponse)commentRequest.GetResponse())
-            {
-                Stream responseStream = response.GetResponseStream();
-                StreamReader responseReader = new StreamReader(responseStream);
-                commentsJson = responseReader.ReadToEnd();
-                responseStream.Close();
-                responseReader.Close();
-            }
-
-            /* Parse the children tokens of 'commentsToken[data]', consisting
-            * of JSON objects representing comments. Deserialize each
-            * object and add it into a IList<InstagramComment> */
+            /* Parse the children tokens of 'commentsToken[data]', comprised
+             * of JSON objects representing comments. */
             JObject commentsToken = JObject.Parse(commentsJson);
             IList<JToken> commentList = commentsToken["data"].Children().ToList();
             IList<InstagramComment> comments = new List<InstagramComment>();
 
+            /* Deserialize each token into a InstagramComment */
             foreach (JToken commentToken in commentList)
             {
                 comments.Add(commentToken.ToObject<InstagramComment>());
             }
 
-            /* Return a list of comments associated with specified media */
+            /* Return the list of comments associated with specified media */
             return comments;
+        }
+
+        /* Perform a GET request to specified endpoint, 
+         * return the response as 'String' */
+        private String GetData(String endpoint)
+        {
+            /* Prepare a GET request to specified endpoint */
+            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(endpoint);
+            request.Method = "GET";
+            string result;
+
+            /* Read the response into a string. 'using' is utilized
+             * to properly dispose of the HttpWebResponse after reading is finished. */
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                /* Read into 'result' using a Stream */
+                Stream responseStream = response.GetResponseStream();
+                StreamReader responseReader = new StreamReader(responseStream);
+                result = responseReader.ReadToEnd();
+                /* Properly close streams */
+                responseStream.Close();
+                responseReader.Close();
+            }
+            /* Return resulting string */
+            return result;
         }
     }
 }
