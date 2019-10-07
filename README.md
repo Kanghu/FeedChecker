@@ -7,6 +7,6 @@ Password: arstudio100
 
 The redirect after authenticating leads to:
 https://localhost:44375/Instagram/Access  
-In order to correctly redirect back to the  
+In order to correctly redirect back to the
 application with a valid authentication code,  
 app must be hosted on port 44375.  
